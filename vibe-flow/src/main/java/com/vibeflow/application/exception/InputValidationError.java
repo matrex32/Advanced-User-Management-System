@@ -5,6 +5,7 @@ import lombok.Getter;
 
 /**
  * The InputValidationError class encapsulates information about a specific validation error related to user input.
+ * @author Denis
  */
 @Getter
 @AllArgsConstructor
