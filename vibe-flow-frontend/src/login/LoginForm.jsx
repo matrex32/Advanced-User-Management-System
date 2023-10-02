@@ -1,12 +1,12 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { TextField, Snackbar, Button, Alert, Grid } from '@mui/material';
+import { TextField, Snackbar, Button, Alert, Grid, Link } from '@mui/material';
 
 /**
  * Component for verify accounts in a database.
  * This component returns a form for users to provide their email and password.
  */
-function LoginForm({ toggleForm }) {
+function LoginForm({ toggleForgotPasswordForm }) {
     // State variable for the user's email address.
     const [email, setEmail] = useState('');
 
@@ -109,7 +109,7 @@ function LoginForm({ toggleForm }) {
         const message = hashMessages[currentHash];
 
         if (message) {
-            if(currentHash === "#success-confirmation") {
+            if (currentHash === "#success-confirmation") {
                 openSnackbar(message, true);
             } else {
                 openSnackbar(message, false);
@@ -122,7 +122,7 @@ function LoginForm({ toggleForm }) {
      */
     useEffect(() => {
         handleInvalidUserHash();
-     }, []);
+    }, []);
 
     return (
         <form action="/login" method='POST' onSubmit={handleSubmitForm}>
@@ -159,35 +159,47 @@ function LoginForm({ toggleForm }) {
                 </Grid>
 
                 {/* "Log In" button */}
-                <Grid item container justifyContent="center">
-                    <Button type="submit" variant="contained">
-                        Log In
-                    </Button>
+                <Grid container>
+                    <Grid item container justifyContent="flex-end">
+                        <Link
+                            component="button"
+                            underline='none'
+                            onClick={toggleForgotPasswordForm}
+                            style={{ fontSize: '17px' }}
+                        >
+                            Forgot password?
+                        </Link>
+                    </Grid>
+                    <Grid item container justifyContent="center">
+                        <Button type="submit" variant="contained">
+                            Log In
+                        </Button>
+                    </Grid>
                 </Grid>
 
                 {/* Conditionally render the Snackbar for showing error messages if showSnackbar is true */}
-                {showSnackbar && 
-                <Grid item>
-                    <Snackbar
-                        open={showSnackbar}
-                        autoHideDuration={5000}
-                        onClose={handleSnackbarClose}
-                        anchorOrigin={{
-                            vertical: "bottom",
-                            horizontal: "center"
-                         }}
-                    >
-                        <Alert
-                            elevation={6}
-                            variant="filled"
+                {showSnackbar &&
+                    <Grid item>
+                        <Snackbar
+                            open={showSnackbar}
+                            autoHideDuration={5000}
                             onClose={handleSnackbarClose}
-                            severity={isSuccessSnackbar ? 'success' : 'error'}
-                            sx={{ width: '100%' }}
+                            anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "center"
+                            }}
                         >
-                            {snackbarMessage}
-                        </Alert>
-                    </Snackbar>
-                </Grid> }
+                            <Alert
+                                elevation={6}
+                                variant="filled"
+                                onClose={handleSnackbarClose}
+                                severity={isSuccessSnackbar ? 'success' : 'error'}
+                                sx={{ width: '100%' }}
+                            >
+                                {snackbarMessage}
+                            </Alert>
+                        </Snackbar>
+                    </Grid>}
             </Grid>
         </form>
 
