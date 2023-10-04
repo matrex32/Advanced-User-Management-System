@@ -167,7 +167,7 @@ function LoginForm({ toggleForgotPasswordForm }) {
                             onClick={toggleForgotPasswordForm}
                             style={{ fontSize: '17px' }}
                         >
-                            Forgot password?
+                            Forgot account?
                         </Link>
                     </Grid>
                     <Grid item container justifyContent="center">

@@ -39,14 +39,14 @@ function AuthCard() {
                 <Card>
                     {/* Header for displaying title and the message from subheader */}
                     <CardHeader
-                        title={showForgotPasswordForm ? 'Forgotten password' : (showLoginForm ? 'Log In' : 'Create New Account')}
+                        title={showForgotPasswordForm ? 'Find your account' : (showLoginForm ? 'Log In' : 'Create New Account')}
 
                         subheader={
                             <Grid container alignItems="center" spacing={1}>
                                 {/* Subheader text */}
                                 <Grid item>
                                     <Typography>
-                                        {showForgotPasswordForm ? ' ' : (showLoginForm ? "Don't have an Vibe Flow account?" : 'Already a member?')}
+                                        {showForgotPasswordForm ? 'Please enter your email to search for your account.' : (showLoginForm ? "Don't have an Vibe Flow account?" : 'Already a member?')}
                                     </Typography>
                                 </Grid>
                                 {/* Link to toggle between login and registration forms */}
@@ -58,7 +58,7 @@ function AuthCard() {
                                             showForgotPasswordForm ? toggleForgotPasswordForm() : toggleForm();
                                         }}
                                     >
-                                        {showForgotPasswordForm ? ' Back to Log In' : (showLoginForm ? ' Create an account' : ' Log In')}
+                                        {showForgotPasswordForm ? '' : (showLoginForm ? ' Create an account' : ' Log In')}
                                     </Link>
 
                                 </Grid>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Snackbar, Alert, Link } from '@mui/material';
+import { TextField, Button, Grid, Snackbar, Alert} from '@mui/material';
 
-function EmailForgotPasswordForm() {
+function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [showSnackbar, setShowSnackbar] = useState(false);
@@ -15,19 +15,15 @@ function EmailForgotPasswordForm() {
         }
     }
 
-    const handleSubmit = () => {
-        // Logica pentru a trimite email-ul și pentru a afișa Snackbar cu mesaj corespunzător.
-    }
-
     const handleSnackbarClose = () => {
         setShowSnackbar(false);
     };
 
-     /**
-    * Validates the input fields for user authentication.
-    * @returns {boolean} True if all input fields are valid, otherwise false.
-    */
-     const validateInputs = () => {
+    /**
+   * Validates the input fields for user authentication.
+   * @returns {boolean} True if all input fields are valid, otherwise false.
+   */
+    const validateInputs = () => {
         let isEmailValid = email.trim() !== '';
 
         // Set an error message for each field if it is invalid.
@@ -35,6 +31,12 @@ function EmailForgotPasswordForm() {
 
         return isEmailValid;
     }
+
+    const handleSubmitForm = (event) => {
+        if (!validateInputs()) {
+            event.preventDefault();
+        }
+    };
 
     return (
         <form>
@@ -51,10 +53,22 @@ function EmailForgotPasswordForm() {
                         fullWidth
                     />
                 </Grid>
-                <Grid item container justifyContent="center">
-                    <Button onClick={handleSubmit} variant="contained">
-                        Send Reset Email
-                    </Button>
+                <Grid item container justifyContent="center" spacing={2}>
+                    <Grid item>
+                        <Button
+                            onClick={toggleForgotPasswordForm}
+                            variant="contained"
+                            sx={{ backgroundColor: 'grey', '&:hover': { backgroundColor: 'darkgrey' } }}
+                        >
+                            Cancel
+                        </Button>
+                    </Grid>
+
+                    <Grid item>
+                        <Button onClick={handleSubmitForm} variant="contained">
+                            Search
+                        </Button>
+                    </Grid>
 
                 </Grid>
                 {showSnackbar &&
