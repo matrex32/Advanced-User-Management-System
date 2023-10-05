@@ -27,8 +27,13 @@ function AuthCard() {
     };
 
     const toggleForgotPasswordForm = () => {
+        if (window.location.hash) {
+            history.replaceState({}, document.title, window.location.pathname);
+        }
+        if (!showForgotPasswordForm) {
+            setShowLoginForm(true);
+        }
         setShowForgotPasswordForm(!showForgotPasswordForm);
-        setShowLoginForm(true);
     };
 
     return (
