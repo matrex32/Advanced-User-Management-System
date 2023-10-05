@@ -49,6 +49,21 @@ public class JwtService {
 	}
 	
 	/**
+	 * Generates a JWT for reset password using the specified user ID.
+	 * 
+	 * @param userId The ID of the user for whom the token is generated
+	 * @return A JWT string
+	 */
+	public String generatePasswordResetToken(Integer userId) {
+		
+	    Map<TokenClaim, Object> claims = new HashMap<>();
+	    claims.put(TokenClaim.USER_ID, userId);
+
+	    return generateToken(claims);
+	}
+
+	
+	/**
 	 * Generates a JWT using the specified claims.
 	 * 
 	 * @param claims A map representing the claims to be included in the token.

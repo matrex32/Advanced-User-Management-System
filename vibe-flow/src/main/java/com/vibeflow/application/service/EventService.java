@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.vibeflow.application.dto.EmailInfo;
 import com.vibeflow.application.events.RegistrationEvent;
+import com.vibeflow.application.events.ResetPasswordEvent;
 import com.vibeflow.application.exception.EmailException;
 import com.vibeflow.application.model.User;
 import com.vibeflow.application.type.EmailTemplateData;
@@ -66,6 +67,38 @@ public class EventService {
         	 */
             EmailInfo emailInfo = new EmailInfo();
             emailInfo.setType(EmailType.CONFIRM_REGISTRATION);
+            emailInfo.setEmailAddress(newUser.getEmail());
+    		emailInfo.setEmailData(emailData);
+    		
+        	emailService.sendEmail(emailInfo);
+		} catch (EmailException e) {
+			System.err.println("Could not send registration email!");
+		}
+    }
+    
+    @EventListener
+    public void handleUserResetPassword(ResetPasswordEvent event) {
+    	User newUser = event.getUser();     
+        
+        Map<String, Object> emailData = new HashMap<>();
+        emailData.put(EmailTemplateData.NAME.getName(), newUser.getName());
+        
+        String token = jwtService.generatePasswordResetToken(newUser.getId());
+		emailData.put(EmailTemplateData.TOKEN.getName(), token);
+		
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+	    String baseUrl = ServletUriComponentsBuilder.fromRequestUri(request)
+	    		.replacePath(null)
+	    		.build()
+	    		.toUriString();
+	    emailData.put(EmailTemplateData.BASEURL.getName(), baseUrl);
+		
+        try {
+        	/**
+        	 * Object containing information about the email.
+        	 */
+            EmailInfo emailInfo = new EmailInfo();
+            emailInfo.setType(EmailType.RESET_PASSWORD);
             emailInfo.setEmailAddress(newUser.getEmail());
     		emailInfo.setEmailData(emailData);
     		

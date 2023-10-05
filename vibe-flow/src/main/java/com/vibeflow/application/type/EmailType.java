@@ -10,5 +10,10 @@ public enum EmailType {
 	/**
      * Email type for confirm registration.
      */
-	CONFIRM_REGISTRATION;
+	CONFIRM_REGISTRATION,
+	
+	/**
+	 * Email type for reset password
+	 */
+	RESET_PASSWORD;
 }

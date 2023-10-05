@@ -62,6 +62,16 @@ public class EmailService {
             	throw new EmailException(EmailMessage.EMAIL_TEMPLATE_NOT_FOUND.getMessage(), e);
             }
             break;
+            
+        case RESET_PASSWORD:
+            try {
+                templateBody = freemarkerConfig.getTemplate("password-reset-body.ftlh");
+                templateSubject = freemarkerConfig.getTemplate("password-reset-subject.ftlh");
+            } catch (java.io.IOException e) {
+                throw new EmailException(EmailMessage.EMAIL_TEMPLATE_NOT_FOUND.getMessage(), e);
+            }
+            break;
+
         default:
         	throw new EmailException(EmailMessage.EMAIL_TYPE_NOT_FOUND.getMessage(), null);
         }
