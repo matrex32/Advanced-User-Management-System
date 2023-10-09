@@ -82,7 +82,12 @@ public enum InternalErrorCode {
 	/**
 	 * The error that occurs when the token is invalid
 	 */
-	INVALID_TOKEN(1015);
+	INVALID_TOKEN(1015),
+	
+	/**
+	 * The error that occurs when the email does not exist
+	 */
+	INCORRECT_EMAIL(1016);
 	
 	/**
 	 * It represents the internal error code

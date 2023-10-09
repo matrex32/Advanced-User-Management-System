@@ -168,6 +168,19 @@ public class UserController {
             }
         }
     }
+    
+    /**
+     * Initiates a password reset process for a user based on the provided email address.
+     * 
+     * @param email The email address of the user for whom the password reset process is to be initiated.
+     * @return A {@code UserDto} representation of the user associated with the provided email.
+     */
+    @GetMapping("/email-reset-password")
+    public UserDto emailResetPassword(@RequestParam String email) {
+    	User forgottenUser = userService.emailResetPassword(email);
+    	
+    	return userConverter.entityToDto(forgottenUser);
+    }
 }
 	
 	

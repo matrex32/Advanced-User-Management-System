@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "oxygen.account")
+@ConfigurationProperties(prefix = "vibe.flow")
 public class VibeFlowPropertiesConfig {
 
 	/**

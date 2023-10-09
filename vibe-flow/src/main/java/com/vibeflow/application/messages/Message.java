@@ -95,7 +95,12 @@ public enum Message {
 	/**
 	 * ID corresponding to the message indicating that the email is not confirmed
 	 */
-	EMAIL_NOT_CONFIRMED("EMAIL_NOT_CONFIRMED", "Email not confirmed.");
+	EMAIL_NOT_CONFIRMED("EMAIL_NOT_CONFIRMED", "Email not confirmed."),
+	
+	/**
+	 * ID corresponding to the message indicating that the email does not exist in the database
+	 */
+	INCORRECT_EMAIL("INCORRECT_EMAIL", "Incorrect email.");
 
 	/**
 	 * Unique identifier corresponding to each type of message.

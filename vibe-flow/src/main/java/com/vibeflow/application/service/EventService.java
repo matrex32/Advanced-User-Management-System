@@ -78,12 +78,12 @@ public class EventService {
     
     @EventListener
     public void handleUserResetPassword(ResetPasswordEvent event) {
-    	User newUser = event.getUser();     
+    	User forgottenUser = event.getUser();     
         
         Map<String, Object> emailData = new HashMap<>();
-        emailData.put(EmailTemplateData.NAME.getName(), newUser.getName());
+        emailData.put(EmailTemplateData.NAME.getName(), forgottenUser.getName());
         
-        String token = jwtService.generatePasswordResetToken(newUser.getId());
+        String token = jwtService.generatePasswordResetToken(forgottenUser.getId());
 		emailData.put(EmailTemplateData.TOKEN.getName(), token);
 		
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -99,7 +99,7 @@ public class EventService {
         	 */
             EmailInfo emailInfo = new EmailInfo();
             emailInfo.setType(EmailType.RESET_PASSWORD);
-            emailInfo.setEmailAddress(newUser.getEmail());
+            emailInfo.setEmailAddress(forgottenUser.getEmail());
     		emailInfo.setEmailData(emailData);
     		
         	emailService.sendEmail(emailInfo);
