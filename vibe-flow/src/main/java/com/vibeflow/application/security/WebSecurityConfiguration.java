@@ -66,7 +66,7 @@ public class WebSecurityConfiguration {
 		http
 		.csrf(csrf -> csrf.disable())
 		.authorizeHttpRequests(authz->authz
-				.requestMatchers("/api/users/register", "/api/users/me", "/api/users/confirm").permitAll()
+				.requestMatchers("/api/users/register", "/api/users/me", "/api/users/confirm", "/api/users/email-reset-password").permitAll()
 				.anyRequest().authenticated())
 		.formLogin(form -> form
 				.loginPage("/login")

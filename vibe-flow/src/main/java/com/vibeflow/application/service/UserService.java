@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.vibeflow.application.config.VibeFlowPropertiesConfig;
 import com.vibeflow.application.dto.ChangePasswordDto;
 import com.vibeflow.application.dto.DeleteUserDto;
+import com.vibeflow.application.dto.EmailResetPasswordDto;
 import com.vibeflow.application.dto.UpdateUserNameDto;
 import com.vibeflow.application.events.RegistrationEvent;
 import com.vibeflow.application.exception.InternalErrorCode;
@@ -25,6 +26,7 @@ import com.vibeflow.application.model.UserStatus;
 import com.vibeflow.application.repository.UserRepository;
 import com.vibeflow.application.type.TokenClaim;
 import com.vibeflow.application.utility.DateUtility;
+import com.vibeflow.application.events.ResetPasswordEvent;
 
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
@@ -227,5 +229,24 @@ public class UserService {
         user.setStatus(UserStatus.ACTIVE.getStatus());
         
         return userRepository.save(user);
+	}
+	
+	/**
+	 * Method used to initiates a password reset process
+	 * 
+	 * @param email email the email address of the user for whom the password reset is to be initiated.
+	 * @return the {@code User} object associated with the provided email.
+	 * @throws VibeFlowException if no user is found associated with the given email.
+	 */
+	public User emailResetPassword(EmailResetPasswordDto emailDto) {
+		String userEmail = emailDto.getEmail();
+		User currentUser = userRepository.findByEmail(userEmail);
+		
+		if(currentUser == null) {
+			throw new VibeFlowException(Message.USER_DOESNT_EXIST, HttpStatus.NOT_FOUND, InternalErrorCode.USER_DOESNT_EXIST);
+		}
+		eventPublisher.publishEvent(new ResetPasswordEvent(this, currentUser));
+		
+		return currentUser;
 	}
 }
