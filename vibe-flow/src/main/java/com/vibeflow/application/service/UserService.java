@@ -243,7 +243,7 @@ public class UserService {
 		User currentUser = userRepository.findByEmail(userEmail);
 		
 		if(currentUser == null) {
-			throw new VibeFlowException(Message.INCORRECT_EMAIL, HttpStatus.NOT_FOUND, InternalErrorCode.INCORRECT_EMAIL);
+			throw new VibeFlowException(Message.USER_DOESNT_EXIST, HttpStatus.NOT_FOUND, InternalErrorCode.USER_DOESNT_EXIST);
 		}
 		eventPublisher.publishEvent(new ResetPasswordEvent(this, currentUser));
 		

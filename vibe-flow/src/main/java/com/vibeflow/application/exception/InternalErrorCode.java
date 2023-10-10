@@ -87,7 +87,7 @@ public enum InternalErrorCode {
 	/**
 	 * The error that occurs when the email does not exist
 	 */
-	INCORRECT_EMAIL(1016);
+	USER_DOESNT_EXIST(1016);
 	
 	/**
 	 * It represents the internal error code
