@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Snackbar, Alert} from '@mui/material';
+import { TextField, Button, Grid,LinearProgress, Snackbar, Alert} from '@mui/material';
 
 function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
     const [email, setEmail] = useState('');
@@ -7,6 +7,10 @@ function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [isSuccessSnackbar, setIsSuccessSnackbar] = useState(false);
+    
+    // State variable indicating when the form submission is in progress.
+    const [isLoadingActive, setisLoadingActive] = useState(false);
+
 
     const handleInputChange = (event) => {
         setEmail(event.target.value);
@@ -32,10 +36,70 @@ function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
         return isEmailValid;
     }
 
-    const handleSubmitForm = (event) => {
+    const clearInputFields = () => {
+        setEmail('');
+    }
+
+     /**
+     * Send a registration request to the server to create a new user account.
+     * @param {Object} newUser - The user object with name, email, and password properties.
+     * @returns {Promise} A promise that resolves with the response data from the server.
+     * @throws {Error} If the response from the server contains an errorMessage.
+     */
+     const sendEmailResetPasswordRequest = (frgottenUser) => {
+        return fetch('api/users/email-reset-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(frgottenUser),
+        })
+            .then((response) => {
+                if (response.ok) {
+                    clearInputFields();
+
+                    setisLoadingActive(false);
+
+                    setIsSuccessSnackbar(true);
+                    setSnackbarMessage('A reset email has been sent to your address.');
+                    setShowSnackbar(true);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setisLoadingActive(false);
+              
+                if (data.errors){
+                    displayInputErrorsFromServer(data.errors);
+                } else if (data.errorMessage) {
+                    throw new Error(data.errorMessage);
+                }
+            })
+            .catch(error => {
+                setisLoadingActive(false);
+
+                setIsSuccessSnackbar(false);
+
+                // If the error name is 'TypeError', it means there was a connection error.
+                // Otherwise, display the error message from the error object.
+                setSnackbarMessage(error.name == "TypeError" ? "The connection could not be established." : error.message);
+
+                setShowSnackbar(true);
+            });
+    };
+
+    const handleClickButton = (event) => {
         if (!validateInputs()) {
             event.preventDefault();
         }
+
+        setisLoadingActive(true);
+
+        const forgottenUser = {
+            email: email.trim(),
+        };
+
+        sendEmailResetPasswordRequest(forgottenUser);
     };
 
     return (
@@ -65,10 +129,16 @@ function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
                     </Grid>
 
                     <Grid item>
-                        <Button onClick={handleSubmitForm} variant="contained">
+                        <Button onClick={handleClickButton} variant="contained" disabled={isLoadingActive}>
                             Search
                         </Button>
                     </Grid>
+
+                    {/* Conditionally render the loading indicator if isLoadingActive is true */}
+                {isLoadingActive &&
+                <Grid item>
+                    <LinearProgress />
+                </Grid>}
 
                 </Grid>
                 {showSnackbar &&

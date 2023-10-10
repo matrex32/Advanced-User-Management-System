@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.vibeflow.application.config.VibeFlowPropertiesConfig;
 import com.vibeflow.application.dto.ChangePasswordDto;
 import com.vibeflow.application.dto.DeleteUserDto;
+import com.vibeflow.application.dto.EmailResetPasswordDto;
 import com.vibeflow.application.dto.UpdateUserNameDto;
 import com.vibeflow.application.events.RegistrationEvent;
 import com.vibeflow.application.exception.InternalErrorCode;
@@ -237,8 +238,9 @@ public class UserService {
 	 * @return the {@code User} object associated with the provided email.
 	 * @throws VibeFlowException if no user is found associated with the given email.
 	 */
-	public User emailResetPassword(String email) {
-		User currentUser = userRepository.findByEmail(email);
+	public User emailResetPassword(EmailResetPasswordDto emailDto) {
+		String userEmail = emailDto.getEmail();
+		User currentUser = userRepository.findByEmail(userEmail);
 		
 		if(currentUser == null) {
 			throw new VibeFlowException(Message.INCORRECT_EMAIL, HttpStatus.NOT_FOUND, InternalErrorCode.INCORRECT_EMAIL);
