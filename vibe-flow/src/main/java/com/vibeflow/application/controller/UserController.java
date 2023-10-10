@@ -13,10 +13,11 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.vibeflow.application.converter.UserConverter;
 import com.vibeflow.application.dto.ChangePasswordDto;
 import com.vibeflow.application.dto.DeleteUserDto;
+import com.vibeflow.application.dto.EmailResetPasswordDto;
 import com.vibeflow.application.dto.UpdateUserNameDto;
 import com.vibeflow.application.dto.UserDto;
-import com.vibeflow.application.exception.VibeFlowException;
 import com.vibeflow.application.exception.UserNotAuthenticatedException;
+import com.vibeflow.application.exception.VibeFlowException;
 import com.vibeflow.application.messages.Message;
 import com.vibeflow.application.model.User;
 import com.vibeflow.application.model.UserStatus;
@@ -167,6 +168,19 @@ public class UserController {
             	return new RedirectView("/login");
             }
         }
+    }
+    
+    /**
+     * Initiates a password reset process for a user based on the provided email address.
+     * 
+     * @param email The email address of the user for whom the password reset process is to be initiated.
+     * @return A {@code UserDto} representation of the user associated with the provided email.
+     */
+    @PostMapping("/email-reset-password")
+    public UserDto emailResetPassword(@RequestBody EmailResetPasswordDto emailDto) {
+    	User forgottenUser = userService.emailResetPassword(emailDto);
+    	
+    	return userConverter.entityToDto(forgottenUser);
     }
 }
 	
