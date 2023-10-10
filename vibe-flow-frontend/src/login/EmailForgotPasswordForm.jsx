@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid,LinearProgress, Snackbar, Alert} from '@mui/material';
+import { TextField, Button, Grid, LinearProgress, Snackbar, Alert } from '@mui/material';
 
 function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
     const [email, setEmail] = useState('');
@@ -7,7 +7,7 @@ function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
     const [showSnackbar, setShowSnackbar] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [isSuccessSnackbar, setIsSuccessSnackbar] = useState(false);
-    
+
     // State variable indicating when the form submission is in progress.
     const [isLoadingActive, setisLoadingActive] = useState(false);
 
@@ -40,13 +40,15 @@ function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
         setEmail('');
     }
 
-     /**
-     * Send a registration request to the server to create a new user account.
-     * @param {Object} newUser - The user object with name, email, and password properties.
-     * @returns {Promise} A promise that resolves with the response data from the server.
-     * @throws {Error} If the response from the server contains an errorMessage.
-     */
-     const sendEmailResetPasswordRequest = (frgottenUser) => {
+    /**
+    * Send a registration request to the server to create a new user account.
+    * @param {Object} newUser - The user object with name, email, and password properties.
+    * @returns {Promise} A promise that resolves with the response data from the server.
+    * @throws {Error} If the response from the server contains an errorMessage.
+    */
+    const sendEmailResetPasswordRequest = (frgottenUser) => {
+        setisLoadingActive(true);
+
         return fetch('api/users/email-reset-password', {
             method: 'POST',
             headers: {
@@ -68,8 +70,8 @@ function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
             })
             .then((data) => {
                 setisLoadingActive(false);
-              
-                if (data.errors){
+
+                if (data.errors) {
                     displayInputErrorsFromServer(data.errors);
                 } else if (data.errorMessage) {
                     throw new Error(data.errorMessage);
@@ -93,13 +95,15 @@ function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
             event.preventDefault();
         }
 
-        setisLoadingActive(true);
+        if (email.trim() !== '') {
+            setisLoadingActive(true);
 
-        const forgottenUser = {
-            email: email.trim(),
-        };
+            const forgottenUser = {
+                email: email.trim(),
+            };
 
-        sendEmailResetPasswordRequest(forgottenUser);
+            sendEmailResetPasswordRequest(forgottenUser);
+        }
     };
 
     return (
@@ -133,38 +137,38 @@ function EmailForgotPasswordForm({ toggleForgotPasswordForm }) {
                             Search
                         </Button>
                     </Grid>
-
-                    {/* Conditionally render the loading indicator if isLoadingActive is true */}
-                {isLoadingActive &&
-                <Grid item>
-                    <LinearProgress />
-                </Grid>}
-
                 </Grid>
-                {showSnackbar &&
-                    <Grid item>
-                        <Snackbar
-                            open={showSnackbar}
-                            autoHideDuration={5000}
+
+                {/* Conditionally render the loading indicator if isLoadingActive is true */}
+                {isLoadingActive &&
+                    <Grid item xs>
+                        <LinearProgress />
+                    </Grid>}
+
+            {showSnackbar &&
+                <Grid item>
+                    <Snackbar
+                        open={showSnackbar}
+                        autoHideDuration={5000}
+                        onClose={handleSnackbarClose}
+                        anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "center"
+                        }}
+                    >
+                        <Alert
+                            elevation={6}
+                            variant="filled"
                             onClose={handleSnackbarClose}
-                            anchorOrigin={{
-                                vertical: "bottom",
-                                horizontal: "center"
-                            }}
+                            severity={isSuccessSnackbar ? 'success' : 'error'}
                         >
-                            <Alert
-                                elevation={6}
-                                variant="filled"
-                                onClose={handleSnackbarClose}
-                                severity={isSuccessSnackbar ? 'success' : 'error'}
-                            >
-                                {snackbarMessage}
-                            </Alert>
-                        </Snackbar>
-                    </Grid>
-                }
-            </Grid>
-        </form>
+                            {snackbarMessage}
+                        </Alert>
+                    </Snackbar>
+                </Grid>
+            }
+        </Grid>
+        </form >
     );
 }
 
