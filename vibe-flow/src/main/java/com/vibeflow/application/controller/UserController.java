@@ -182,8 +182,35 @@ public class UserController {
     	
     	return userConverter.entityToDto(forgottenUser);
     }
+    
+    @GetMapping("/redirect-reset-password")
+    public RedirectView resetUserPassword(@RequestParam String token) {
+    	
+    	if(token == null) {
+    		return new RedirectView(UrlAnchor.RESET_PASSWORD_INVALID_TOKEN.getAnchor());
+    	}
+    	
+    	try {
+    		userService.redirectViewResetPassword(token);
+            return new RedirectView(UrlAnchor.RESET_PASSWORD.getAnchor() + token);
+            
+    	}catch (VibeFlowException e) {
+    		 e.printStackTrace();
+            String messageId = e.getMessageId();
+            
+            if(messageId.equals(Message.INVALID_TOKEN.getId())) {
+            	return new RedirectView(UrlAnchor.RESET_PASSWORD_INVALID_TOKEN.getAnchor());
+            	
+            } else if(messageId.equals(Message.TOKEN_EXPIRED.getId())) {
+            	return new RedirectView(UrlAnchor.RESET_PASSWORD_TOKEN_EXPIRED.getAnchor());
+    
+            }
+            else {
+            	return new RedirectView("/resetPassword");
+            }
+    	}
+    }
 }
-	
 	
 
 	

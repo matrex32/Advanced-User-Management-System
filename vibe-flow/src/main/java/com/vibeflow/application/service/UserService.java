@@ -2,6 +2,7 @@ package com.vibeflow.application.service;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -248,5 +249,37 @@ public class UserService {
 		eventPublisher.publishEvent(new ResetPasswordEvent(this, currentUser));
 		
 		return currentUser;
+	}
+	
+	/**
+	 * This method is responsible for reset user password through a given token.
+	 * 
+	 * @param token A String representing the token used for reset user password.
+	 * @throws  OxygenAccountException if the token is invalid, expired, or the user is already active
+	 */
+	public void redirectViewResetPassword(String token) {
+		Claims claims;
+
+		try {
+			claims = jwtService.parseToken(token);
+		} catch (Exception e) {
+			throw new VibeFlowException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
+		}
+
+		Integer userId = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
+
+		if (userId == null) {
+			throw new VibeFlowException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
+		}
+
+		Timestamp currentDate = DateUtility.getCurrentUTCTimestamp();
+		Timestamp tokenIssueDate = new Timestamp(claims.getIssuedAt().getTime());
+
+		long differenceMilliseconds = currentDate.getTime() - tokenIssueDate.getTime();
+		long differenceDays = TimeUnit.MILLISECONDS.toDays(differenceMilliseconds);
+
+		if(differenceDays >= vibeFlowProperties.getDaysForResetPassword()) {
+			throw new VibeFlowException(Message.TOKEN_EXPIRED, HttpStatus.GONE, InternalErrorCode.TOKEN_EXPIRED);
+		}
 	}
 }

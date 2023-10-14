@@ -79,6 +79,7 @@ public class JwtService {
 		}
 
 		return jwtBuilder
+				.setIssuedAt(new Timestamp(System.currentTimeMillis()))
 				.signWith(key)
 				.compact();
 	}

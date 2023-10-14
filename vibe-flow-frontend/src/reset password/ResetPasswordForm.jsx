@@ -67,7 +67,7 @@ function ResetPasswordForm() {
         let isConfirmPasswordValid = confirmNewPassword.trim() !== '' && password === confirmPassword;
 
         // Set an error message for each field if it is invalid.
-        setPasswordError(isPasswordValid ? '' : 'Password must be at least 8 characters.');
+        setPasswordError(isPasswordValid ? '' : 'Input field is too short. Please enter a longer value.');
         setConfirmPasswordError(isConfirmPasswordValid ? '' : 'Passwords do not match.');
 
         return isPasswordValid && isConfirmPasswordValid;

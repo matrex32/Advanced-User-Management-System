@@ -179,7 +179,7 @@ function RegistrationForm({ toggleForm }) {
         // Set an error message for each field if it is invalid.
         setNameError(isNameValid ? '' : 'Please provide a non-empty value.');
         setEmailError(isEmailValid ? '' : 'Email should be valid.');
-        setPasswordError(isPasswordValid ? '' : 'Password must be at least 8 characters.');
+        setPasswordError(isPasswordValid ? '' : 'Input field is too short. Please enter a longer value.');
         setConfirmPasswordError(isConfirmPasswordValid ? '' : 'Passwords do not match.');
 
         return isNameValid && isEmailValid && isPasswordValid && isConfirmPasswordValid;
