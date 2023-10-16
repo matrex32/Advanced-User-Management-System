@@ -16,6 +16,7 @@ import com.vibeflow.application.config.VibeFlowPropertiesConfig;
 import com.vibeflow.application.dto.ChangePasswordDto;
 import com.vibeflow.application.dto.DeleteUserDto;
 import com.vibeflow.application.dto.EmailResetPasswordDto;
+import com.vibeflow.application.dto.ResetPasswordDto;
 import com.vibeflow.application.dto.UpdateUserNameDto;
 import com.vibeflow.application.events.RegistrationEvent;
 import com.vibeflow.application.exception.InternalErrorCode;
@@ -252,25 +253,26 @@ public class UserService {
 	}
 	
 	/**
-	 * This method is responsible for reset user password through a given token.
+	 * Verifies the provided token used for resetting a password.
 	 * 
-	 * @param token A String representing the token used for reset user password.
-	 * @throws  OxygenAccountException if the token is invalid, expired, or the user is already active
+	 * @param token The JWT token to be verified.
+	 * @return claims The claims extracted from the valid token.
 	 */
-	public void redirectViewResetPassword(String token) {
+	public Claims verifyToken (String token) {
 		Claims claims;
-
+		
 		try {
 			claims = jwtService.parseToken(token);
 		} catch (Exception e) {
 			throw new VibeFlowException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
-		}
-
+		} 
+		
 		Integer userId = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
 
 		if (userId == null) {
 			throw new VibeFlowException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
 		}
+		
 
 		Timestamp currentDate = DateUtility.getCurrentUTCTimestamp();
 		Timestamp tokenIssueDate = new Timestamp(claims.getIssuedAt().getTime());
@@ -281,5 +283,26 @@ public class UserService {
 		if(differenceDays >= vibeFlowProperties.getDaysForResetPassword()) {
 			throw new VibeFlowException(Message.TOKEN_EXPIRED, HttpStatus.GONE, InternalErrorCode.TOKEN_EXPIRED);
 		}
+		
+		return claims;
+	}
+	
+	/**
+	 * Resets the password of a user based on the provided JWT token and new password details.
+	 * 
+	 * @param token The JWT token used to verify the user's identity and the validity of the reset request.
+	 * @param resetPasswordDto Data Transfer Object containing the new password details.
+	 * @return The updated {@code User} object after the password reset.
+	 */
+	public User resetUserPassword(String token, ResetPasswordDto resetPasswordDto) {
+		
+		Claims claims = verifyToken(token);
+		
+		Integer userId = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
+		
+		User user = userRepository.findById((int) userId);
+		user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
+		
+		return userRepository.save(user);
 	}
 }
