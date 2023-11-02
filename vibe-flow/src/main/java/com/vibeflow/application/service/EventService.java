@@ -92,6 +92,9 @@ public class EventService {
 	    		.build()
 	    		.toUriString();
 	    emailData.put(EmailTemplateData.BASEURL.getName(), baseUrl);
+	    
+
+
 		
         try {
         	/**

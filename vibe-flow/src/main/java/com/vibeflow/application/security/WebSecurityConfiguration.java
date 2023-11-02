@@ -34,6 +34,7 @@ public class WebSecurityConfiguration {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	
 	/**
      * Configures authentication using user details and password encoder.
      *
@@ -55,6 +56,11 @@ public class WebSecurityConfiguration {
 		return new CustomAuthenticationFailureHandler();
 	}
 	
+	@Bean
+    public CustomAuthenticationEntryPoint customAuthenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
+	
 	/**
 	 * This method defines security like disabling CSRF protection, defining which requests are allowed without authentication
 	 * @param http - the HttpSecurity instance
@@ -65,8 +71,11 @@ public class WebSecurityConfiguration {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 		.csrf(csrf -> csrf.disable())
+		.exceptionHandling(exception -> exception
+				.authenticationEntryPoint(customAuthenticationEntryPoint())
+		        )
 		.authorizeHttpRequests(authz->authz
-				.requestMatchers("/api/users/register", "/api/users/me", "/api/users/confirm", "/api/users/email-reset-password").permitAll()
+				.requestMatchers("/api/users/register", "/api/users/me", "/api/users/confirm", "/api/users/email-reset-password","/api/users/reset-password", "/api/users/redirect-reset-password", "reset-password").permitAll()
 				.anyRequest().authenticated())
 		.formLogin(form -> form
 				.loginPage("/login")
@@ -86,6 +95,7 @@ public class WebSecurityConfiguration {
 	public WebSecurityCustomizer ignoringCustomizer() {
 		return web -> web.ignoring()
 				.requestMatchers("/app/login.js")
+				.requestMatchers("/app/resetPassword.js")
         		.requestMatchers("/img/logo.jpg");
 	}
       

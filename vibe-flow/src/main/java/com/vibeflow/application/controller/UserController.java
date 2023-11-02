@@ -1,6 +1,7 @@
 package com.vibeflow.application.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,8 +15,12 @@ import com.vibeflow.application.converter.UserConverter;
 import com.vibeflow.application.dto.ChangePasswordDto;
 import com.vibeflow.application.dto.DeleteUserDto;
 import com.vibeflow.application.dto.EmailResetPasswordDto;
+import com.vibeflow.application.dto.PasswordResetResponseDto;
+import com.vibeflow.application.dto.ResetPasswordDto;
 import com.vibeflow.application.dto.UpdateUserNameDto;
 import com.vibeflow.application.dto.UserDto;
+import com.vibeflow.application.exception.InternalErrorCode;
+import com.vibeflow.application.exception.TokenException;
 import com.vibeflow.application.exception.UserNotAuthenticatedException;
 import com.vibeflow.application.exception.VibeFlowException;
 import com.vibeflow.application.messages.Message;
@@ -52,7 +57,7 @@ public class UserController {
      */
 	@Autowired
 	private ValidationService validationService;
-	
+
 	/**
      * Handles the POST request to register a new user.
      * 
@@ -144,7 +149,7 @@ public class UserController {
     @GetMapping("/confirm")
     public RedirectView confirmUserRegistration(@RequestParam String token) {
 
-    	if(token == null) {
+    	if( token == null || token.trim().isEmpty() ) {
     		return new RedirectView(UrlAnchor.INVALID_TOKEN.getAnchor());
     	}
     	
@@ -182,8 +187,88 @@ public class UserController {
     	
     	return userConverter.entityToDto(forgottenUser);
     }
+    
+    /**
+     * Handles the request to redirect the user for password reset based on the provided token.
+     * 
+     * @param token The JWT token used to verify the user's identity and the validity of the reset request.
+     * @return A RedirectView pointing to the next step
+     */
+    @GetMapping("/redirect-reset-password")
+    public RedirectView resetUserPassword(@RequestParam String token) {
+    	
+    	if( token == null || token.trim().isEmpty() ) {
+    		return new RedirectView(UrlAnchor.RESET_PASSWORD_INVALID_TOKEN.getAnchor());
+    	}
+    	
+    	try {
+    		userService.verifyResetPasswordToken(token);
+            return new RedirectView(UrlAnchor.RESET_PASSWORD.getAnchor() + token);
+            
+    	}catch (VibeFlowException e) {
+    		 e.printStackTrace();
+            String messageId = e.getMessageId();
+            
+            if(messageId.equals(Message.INVALID_TOKEN.getId())) {
+            	return new RedirectView(UrlAnchor.RESET_PASSWORD_INVALID_TOKEN.getAnchor());
+            	
+            } else if(messageId.equals(Message.TOKEN_EXPIRED.getId())) {
+            	return new RedirectView(UrlAnchor.RESET_PASSWORD_TOKEN_EXPIRED.getAnchor());
+    
+            }
+            else {
+            	return new RedirectView("/reset-password");
+            }
+    	}
+    }
+    
+    /**
+     * Resets the password for a user based on the provided token and the new password information.
+     * 
+     * @param token The JWT token used to verify the user's identity.
+     * @param resetPasswordDto Data Transfer Object containing the new password information.
+     * @return A ResponseEntity containing either the updated UserDto or an error status.
+     */
+    /*
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword( @RequestBody ResetPasswordDto resetPasswordDto) {
+       String token = resetPasswordDto.getToken();
+       System.out.println(token);
+       System.out.println(resetPasswordDto.getNewPassword());
+       System.out.println("Sunt aici");
+    	if (token == null) {
+            return new ResponseEntity<>(new RedirectView(UrlAnchor.RESET_PASSWORD_INVALID_TOKEN.getAnchor()), HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            User user = userService.resetUserPassword(token, resetPasswordDto);
+            UserDto userDto = userConverter.entityToDto(user);
+            
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        } catch (VibeFlowException e) {
+            e.printStackTrace();
+            String messageId = e.getMessageId();
+            
+            if (messageId.equals(Message.INVALID_TOKEN.getId())) {
+            	
+                return new ResponseEntity<>(new RedirectView(UrlAnchor.RESET_PASSWORD_INVALID_TOKEN.getAnchor()), HttpStatus.BAD_REQUEST);
+           
+            } else if (messageId.equals(Message.TOKEN_EXPIRED.getId())) {
+            	
+                return new ResponseEntity<>(new RedirectView(UrlAnchor.RESET_PASSWORD_TOKEN_EXPIRED.getAnchor()), HttpStatus.GONE);
+                
+            } else {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }*/
+    
+    @PutMapping("/reset-password")
+    public UserDto resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+    	User user = userService.resetUserPassword(resetPasswordDto);
+    	return userConverter.entityToDto(user);
+    }
 }
-	
 	
 
 	

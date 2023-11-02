@@ -2,6 +2,7 @@ package com.vibeflow.application.service;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,6 +16,7 @@ import com.vibeflow.application.config.VibeFlowPropertiesConfig;
 import com.vibeflow.application.dto.ChangePasswordDto;
 import com.vibeflow.application.dto.DeleteUserDto;
 import com.vibeflow.application.dto.EmailResetPasswordDto;
+import com.vibeflow.application.dto.ResetPasswordDto;
 import com.vibeflow.application.dto.UpdateUserNameDto;
 import com.vibeflow.application.events.RegistrationEvent;
 import com.vibeflow.application.exception.InternalErrorCode;
@@ -248,5 +250,59 @@ public class UserService {
 		eventPublisher.publishEvent(new ResetPasswordEvent(this, currentUser));
 		
 		return currentUser;
+	}
+	
+	/**
+	 * Verifies the provided token used for resetting a password.
+	 * 
+	 * @param token The JWT token to be verified.
+	 * @return claims The claims extracted from the valid token.
+	 */
+	public Claims verifyResetPasswordToken (String token) {
+		Claims claims;
+		
+		try {
+			claims = jwtService.parseToken(token);
+		} catch (Exception e) {
+			throw new VibeFlowException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
+		} 
+		
+		Integer userId = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
+
+		if (userId == null) {
+			throw new VibeFlowException(Message.INVALID_TOKEN, HttpStatus.BAD_REQUEST, InternalErrorCode.INVALID_TOKEN);
+		}
+		
+
+		Timestamp currentDate = DateUtility.getCurrentUTCTimestamp();
+		Timestamp tokenIssueDate = new Timestamp(claims.getIssuedAt().getTime());
+
+		long differenceMilliseconds = currentDate.getTime() - tokenIssueDate.getTime();
+		long differenceDays = TimeUnit.MILLISECONDS.toDays(differenceMilliseconds);
+
+		if(differenceDays >= vibeFlowProperties.getDaysForResetPassword()) {
+			throw new VibeFlowException(Message.TOKEN_EXPIRED, HttpStatus.GONE, InternalErrorCode.TOKEN_EXPIRED);
+		}
+		
+		return claims;
+	}
+	
+	/**
+	 * Resets the password of a user based on the provided JWT token and new password details.
+	 * 
+	 * @param token The JWT token used to verify the user's identity and the validity of the reset request.
+	 * @param resetPasswordDto Data Transfer Object containing the new password details.
+	 * @return The updated {@code User} object after the password reset.
+	 */
+	public User resetUserPassword(ResetPasswordDto resetPasswordDto) {
+		
+		Claims claims = verifyResetPasswordToken(resetPasswordDto.getToken());
+		
+		Integer userId = claims.get(TokenClaim.USER_ID.getName(), Integer.class);
+		
+		User user = userRepository.findById((int) userId);
+		user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
+		
+		return userRepository.save(user);
 	}
 }

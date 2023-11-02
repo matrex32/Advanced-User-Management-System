@@ -30,4 +30,9 @@ public class VibeFlowPropertiesConfig {
 	  * The number of days until a new user is permanently deleted from the system.
 	  */
 	 private int daysForEmailConfirmation;
+	 
+	 /**
+	  * The number of days until the user can reset password
+	  */
+	 private int daysForResetPassword;
 }

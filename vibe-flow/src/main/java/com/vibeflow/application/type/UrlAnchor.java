@@ -35,7 +35,27 @@ public enum UrlAnchor {
 	 */
 	USER_ALREADY_CONFIRMED("/login#user-already-confirmed"),
 
-	UNCONFIRMED_USER("/login#unconfirmed-user");
+	/**
+	 * Repreents the anchor for a user who is unconfirmed
+	 */
+	UNCONFIRMED_USER("/login#unconfirmed-user"),
+	
+	/**
+	 * Represents the path to reset password view
+	 */
+	RESET_PASSWORD("/reset-password?token="),
+	
+	RESET_PASSWORD_SUCCESSFULLY("/reset-password#reset-password-successfully"),
+	
+	/**
+	 * Represents the reset password invalid token
+	 */
+	RESET_PASSWORD_INVALID_TOKEN("/reset-password#invalid-token"),
+	
+	/**
+	 * Reppresents the reset password token expired
+	 */
+	RESET_PASSWORD_TOKEN_EXPIRED("/reset-password#token-expired");
 
 	/**
      * The actual URL anchor string associated with the enum constant.
