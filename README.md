@@ -1,4 +1,4 @@
-# vibe-flow
+# VibeFlow
 ![Java CI with Maven](https://github.com/oxygenxml-incubator/oxygen-account/workflows/Java%20CI%20with%20Maven/badge.svg)
 
   Feature Set: Profile Editing: Users are permitted to edit their profiles solely by utilizing the designated edit button, limiting unauthorized access and alterations. Currently, only modifications to the user’s name are facilitated. 
