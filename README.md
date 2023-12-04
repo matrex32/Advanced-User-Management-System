@@ -14,3 +14,8 @@
   Usability: This application stands out due to its user-friendly interface and a well-thought-out set of features, focusing on user experience and accessibility, ensuring secure and efficient interactions.
 
   Conclusion: This multifaceted application, developed with advanced technologies and meticulous attention to user experience and security, offers a seamless and secure environment for user registration, profile management, and accessibility. The detailed consideration given to exception handling and user status management underscores its reliability and user-centric approach.
+![Screenshot 2023-12-04 154055](https://github.com/matrex32/VibeFlow/assets/118893406/89a5a8bf-48ae-4bf7-bc1f-ffd687007cfe)
+
+![1](https://github.com/matrex32/VibeFlow/assets/118893406/9b17f366-6638-464a-b4e5-5552140b7205)
+![2](https://github.com/matrex32/VibeFlow/assets/118893406/a4646be4-278c-4436-a2da-3d8b34966d79)
+![3](https://github.com/matrex32/VibeFlow/assets/118893406/254c6548-fc46-47c4-a57a-b52104c73163)
