@@ -6,7 +6,7 @@ import com.vibeflow.application.messages.Message;
 
 import lombok.Getter;
 /**
- * This class is used for handling custom exceptions specific to the Oxygen Account
+ * This class is used for handling custom exceptions specific to the VibeFlow Account
  * @author Denis
  */
 @Getter
@@ -33,7 +33,7 @@ public class VibeFlowException extends RuntimeException{
 	private final InternalErrorCode errorCode;
 	
 	/**
-	 * Constructs a new OxygenAccountExceptions with the specified detail message, HTTP status, and error code.
+	 * Constructs a new VibeFlowException with the specified detail message, HTTP status, and error code.
 	 * 
 	 * @param message the detail message of the error
 	 * @param status the status of the HTTP response

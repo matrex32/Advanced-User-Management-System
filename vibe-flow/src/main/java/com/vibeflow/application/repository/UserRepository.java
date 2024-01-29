@@ -8,7 +8,7 @@ import com.vibeflow.application.model.User;
 
 
 /**
- * The com.oxygenxml.repository package contains interfaces and classes related to the repository layer of the application.
+ * The com.vibeflow.repository package contains interfaces and classes related to the repository layer of the application.
  *
  * The UserRepository interface extends the JpaRepository interface to provide database access methods for the User entity.
  *
