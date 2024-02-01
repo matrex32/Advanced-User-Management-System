@@ -66,7 +66,7 @@ public class UserService {
 	 * 
 	 * @param newUser The new User entity to be registered.
 	 * @return The registered User entity
-	 * @throws OxygenAccountException If a user with the same email already exists.
+	 * @throws VibeFlowException If a user with the same email already exists.
 	 */
 	public com.vibeflow.application.model.User registerUser(User newUser) {
 				
